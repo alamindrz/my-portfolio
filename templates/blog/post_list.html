@@ -1,74 +1,192 @@
 {% extends 'blog/base.html' %}
 
 {% block blog_content %}
-<div class="grid lg:grid-cols-4 gap-8">
-    <!-- Sidebar with categories -->
-    <div class="lg:col-span-1">
-        {% include 'blog/partials/category_filter.html' %}
-    </div>
-    
-    <!-- Posts grid -->
-    <div class="lg:col-span-3">
-        <h1 class="text-4xl font-bold text-gray-800 mb-8 animate-fade-in-up">Blog</h1>
-        
+<!-- Blog Hero Section -->
+<section class="pt-20 pb-16 bg-gradient-to-br from-purple-50 to-blue-100">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in-up">Blog</h1>
+        <p class="text-xl text-gray-600 mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+            Django insights, tutorials, and web development thoughts
+        </p>
         {% if current_category %}
-        <div class="mb-6 animate-fade-in-up" style="animation-delay: 0.1s;">
-            <p class="text-gray-600">Filtering by: 
-                <span class="font-semibold text-purple-600">
+        <div class="animate-fade-in-up" style="animation-delay: 0.4s;">
+            <p class="text-gray-600 inline-flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
+                Filtering by: 
+                <span class="font-semibold text-purple-600 ml-1">
                     {% for cat in categories %}
                         {% if cat.slug == current_category %}{{ cat.name }}{% endif %}
                     {% endfor %}
                 </span>
-                <a href="{% url 'blog_list' %}" class="ml-2 text-sm text-gray-500 hover:text-purple-600">
-                    (clear filter)
+                <a href="{% url 'blog_list' %}" class="ml-2 text-gray-400 hover:text-purple-600 transition-colors">
+                    ✕
                 </a>
             </p>
         </div>
         {% endif %}
-        
-        <div class="grid md:grid-cols-2 gap-6">
-            {% for post in posts %}
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover-lift animate-fade-in-up"
-                 style="animation-delay: {{ forloop.counter0|add:0.2 }}s">
-                {% if post.header_image %}
-                <img src="{{ post.header_image.url }}" 
-                     alt="{{ post.title }}"
-                     class="w-full h-48 object-cover">
-                {% endif %}
-                
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-sm text-purple-600 font-semibold">
-                            {{ post.category.name }}
-                        </span>
-                        <span class="text-sm text-gray-500">
-                            {{ post.created_at|date:"M j, Y" }}
-                        </span>
+    </div>
+</section>
+
+<!-- Blog Content -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+            <!-- Sidebar with categories -->
+            <div class="lg:w-1/4">
+                <div class="sticky top-24 animate-fade-in-up">
+                    {% include 'blog/partials/category_filter.html' %}
+                    
+                    <!-- Additional sidebar content -->
+                    <div class="mt-8 p-6 bg-gray-50 rounded-2xl border border-gray-100">
+                        <h3 class="font-semibold text-gray-800 mb-3">About This Blog</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Sharing Django tips, web development insights, and project experiences from my journey as a backend developer.
+                        </p>
+                        <div class="flex items-center text-sm text-purple-600 font-semibold">
+                            <span>📚</span>
+                            <span class="ml-2">Learning & Growing</span>
+                        </div>
                     </div>
-                    
-                    <h2 class="text-xl font-bold text-gray-800 mb-3 hover:text-purple-600 transition">
-                        <a href="{% url 'post_detail' post.slug %}">{{ post.title }}</a>
-                    </h2>
-                    
-                    {% if post.subtitle %}
-                    <p class="text-gray-600 mb-4">{{ post.subtitle }}</p>
-                    {% endif %}
-                    
-                    <a href="{% url 'post_detail' post.slug %}" 
-                       class="text-purple-600 hover:text-purple-700 font-semibold text-sm inline-flex items-center">
-                        Read More
-                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </a>
                 </div>
             </div>
-            {% empty %}
-            <div class="lg:col-span-3 text-center py-12 animate-fade-in-up">
-                <p class="text-gray-500 text-lg">No posts found.</p>
+            
+            <!-- Posts grid -->
+            <div class="lg:w-3/4">
+                <div class="grid md:grid-cols-2 gap-8">
+                    {% for post in posts %}
+                    <article class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover-lift animate-fade-in-up"
+                             style="animation-delay: {{ forloop.counter0|add:0.1 }}s">
+                        
+                        <!-- Post Image -->
+                        {% if post.header_image %}
+                        <div class="relative overflow-hidden">
+                            <img src="{{ post.header_image.url }}" 
+                                 alt="{{ post.title }}"
+                                 class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            
+                            <!-- Category Badge -->
+                            <div class="absolute top-4 left-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm text-purple-600">
+                                    {{ post.category.name }}
+                                </span>
+                            </div>
+                            
+                            <!-- Read Time Badge (Simplified) -->
+                            <div class="absolute top-4 right-4">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-black/70 text-white backdrop-blur-sm">
+                                    📖 Blog Post
+                                </span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="w-full h-48 bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center relative">
+                            <span class="text-white text-lg font-semibold">📝</span>
+                            <div class="absolute top-4 left-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-sm text-white">
+                                    {{ post.category.name }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Post Content -->
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-sm text-gray-500 font-medium">
+                                    {{ post.created_at|date:"F j, Y" }}
+                                </span>
+                                {% if post.status == 'published' %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-600">
+                                    ● Published
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-600">
+                                    ⏳ Draft
+                                </span>
+                                {% endif %}
+                            </div>
+                            
+                            <h2 class="text-xl font-bold text-gray-800 mb-3 group-hover:text-purple-600 transition-colors duration-300 line-clamp-2">
+                                <a href="{% url 'post_detail' post.slug %}" class="hover:no-underline">
+                                    {{ post.title }}
+                                </a>
+                            </h2>
+                            
+                            {% if post.subtitle %}
+                            <p class="text-gray-600 mb-4 leading-relaxed line-clamp-2">
+                                {{ post.subtitle }}
+                            </p>
+                            {% endif %}
+                            
+                            <!-- Author & Actions -->
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <span>👨‍💻</span>
+                                    <span class="ml-2">{{ post.author.get_full_name|default:post.author.username }}</span>
+                                </div>
+                                
+                                <a href="{% url 'post_detail' post.slug %}" 
+                                   class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold text-sm transition-all group/link">
+                                    Read Article
+                                    <svg class="w-4 h-4 ml-1 transform group-hover/link:translate-x-1 transition-transform" 
+                                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <!-- Empty State -->
+                    <div class="lg:col-span-3 text-center py-16 animate-fade-in-up">
+                        <div class="max-w-md mx-auto">
+                            <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-12 h-12 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-700 mb-3">No Articles Yet</h3>
+                            <p class="text-gray-500 mb-6 leading-relaxed">
+                                I'm currently working on some insightful Django and web development content. 
+                                Check back soon for tutorials, tips, and project deep-dives.
+                            </p>
+                            <div class="space-y-3">
+                                <a href="{% url 'project_list' %}" 
+                                   class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold transition-all hover-lift block">
+                                    ← View My Projects Instead
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            {% endfor %}
         </div>
     </div>
-</div>
+</section>
+
+<!-- Newsletter CTA -->
+<section class="py-16 bg-gray-50 border-t border-gray-100">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6 animate-fade-in-up">Stay Updated</h2>
+        <p class="text-xl text-gray-600 mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+            Get notified when I publish new Django tutorials and web development insights.
+        </p>
+        <div class="animate-fade-in-up" style="animation-delay: 0.4s;">
+            <a href="mailto:alaminusmansaleh961@gmail.com?subject=Subscribe to Blog Updates" 
+               class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all hover-lift inline-block">
+                📧 Subscribe via Email
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
 {% endblock %}

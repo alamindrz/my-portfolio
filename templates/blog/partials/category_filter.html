@@ -1,15 +1,69 @@
-<div class="bg-white p-6 rounded-lg shadow-sm">
-    <h3 class="text-lg font-semibold mb-4">Categories</h3>
-    <div class="space-y-2">
+<div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover-lift transition-all duration-300">
+    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+        </svg>
+        Browse Topics
+    </h3>
+    
+    <div class="space-y-3">
+        <!-- All Categories -->
         <a href="{% url 'blog_list' %}" 
-           class="block text-gray-600 hover:text-purple-600 transition {% if not current_category %}font-semibold text-purple-600{% endif %}">
-            All Categories
+           class="group flex items-center justify-between p-3 rounded-xl transition-all duration-300 {% if not current_category %}bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200{% else %}bg-gray-50 hover:bg-purple-50{% endif %}">
+            <div class="flex items-center">
+                <span class="text-lg mr-3 {% if not current_category %}text-purple-600{% else %}text-gray-400 group-hover:text-purple-500{% endif %}">
+                    🌟
+                </span>
+                <span class="font-medium {% if not current_category %}text-purple-700{% else %}text-gray-700 group-hover:text-purple-600{% endif %}">
+                    All Topics
+                </span>
+            </div>
+            <span class="text-xs px-2 py-1 rounded-full {% if not current_category %}bg-purple-100 text-purple-700{% else %}bg-gray-100 text-gray-600 group-hover:bg-purple-100 group-hover:text-purple-700{% endif %}">
+                {{ categories.count }}
+            </span>
         </a>
+
+        <!-- Category List -->
         {% for category in categories %}
         <a href="{% url 'blog_list' %}?category={{ category.slug }}" 
-           class="block text-gray-600 hover:text-purple-600 transition {% if current_category == category.slug %}font-semibold text-purple-600{% endif %}">
-            {{ category.name }}
+           class="group flex items-center justify-between p-3 rounded-xl transition-all duration-300 {% if current_category == category.slug %}bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200{% else %}bg-gray-50 hover:bg-purple-50{% endif %}">
+            <div class="flex items-center">
+                <span class="text-lg mr-3 {% if current_category == category.slug %}text-purple-600{% else %}text-gray-400 group-hover:text-purple-500{% endif %}">
+                    {% if category.name == "Django" %}🐍
+                    {% elif category.name == "Web Development" %}🌐
+                    {% elif category.name == "Tutorials" %}📚
+                    {% elif category.name == "Python" %}🐍
+                    {% elif category.name == "Backend" %}⚡
+                    {% else %}📝{% endif %}
+                </span>
+                <span class="font-medium {% if current_category == category.slug %}text-purple-700{% else %}text-gray-700 group-hover:text-purple-600{% endif %}">
+                    {{ category.name }}
+                </span>
+            </div>
+            {% if category.post_count %}
+            <span class="text-xs px-2 py-1 rounded-full {% if current_category == category.slug %}bg-purple-100 text-purple-700{% else %}bg-gray-100 text-gray-600 group-hover:bg-purple-100 group-hover:text-purple-700{% endif %}">
+                {{ category.post_count }}
+            </span>
+            {% endif %}
         </a>
         {% endfor %}
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="mt-6 pt-4 border-t border-gray-200">
+        <div class="grid grid-cols-2 gap-4 text-center">
+            <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-2xl font-bold text-purple-600">
+                    {% with total_posts=posts|length %}
+                        {{ total_posts }}
+                    {% endwith %}
+                </div>
+                <div class="text-xs text-gray-500">Articles</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3">
+                <div class="text-2xl font-bold text-blue-600">{{ categories.count }}</div>
+                <div class="text-xs text-gray-500">Topics</div>
+            </div>
+        </div>
     </div>
 </div>
