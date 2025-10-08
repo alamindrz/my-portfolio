@@ -1,0 +1,129 @@
+<!-- templates/blog/partials/copy_code.html -->
+<!-- Highlight.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/monokai.min.css">
+
+<!-- Highlight.js Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- Highlight.js Language Support -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/html.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/django.min.js"></script>
+
+<style>
+/* Custom styles for code blocks */
+.hljs {
+    border-radius: 8px;
+    padding: 1.5rem !important;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+pre code {
+    border-radius: 8px;
+    position: relative;
+}
+
+.code-block-wrapper {
+    position: relative;
+    margin: 1.5rem 0;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.copy-btn.copied {
+    background: rgb(112,74,230);
+    border-color: #108;
+}
+
+/* CKEditor code snippet styling */
+pre {
+    background: #2d2d2d !important;
+    color: #f8f8f2 !important;
+    /* padding: 1.5rem !important; */
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    position: relative;
+}
+</style>
+
+<script>
+// Initialize highlight.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Highlight all code blocks
+    hljs.highlightAll();
+    
+    // Add copy buttons to all code blocks
+    addCopyButtons();
+});
+
+function addCopyButtons() {
+    const codeBlocks = document.querySelectorAll('pre code');
+    
+    codeBlocks.forEach((codeBlock, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+        
+        const pre = codeBlock.parentElement;
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+        
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-btn';
+        copyButton.textContent = 'Copy';
+        copyButton.setAttribute('data-code-id', `code-${index}`);
+        
+        wrapper.appendChild(copyButton);
+        
+        copyButton.addEventListener('click', async () => {
+            const code = codeBlock.textContent;
+            
+            try {
+                await navigator.clipboard.writeText(code);
+                copyButton.textContent = 'Copied!';
+                copyButton.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                    copyButton.classList.remove('copied');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                }, 2000);
+            }
+        });
+    });
+}
+</script>
